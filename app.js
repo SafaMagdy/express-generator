@@ -44,6 +44,16 @@ app.use(passport.session());
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
+// Secure traffic only
+app.all('*', (req, res, next) => {
+  if (req.secure) {
+    return next();
+  }
+  else {
+    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+  }
+});
+
 app.use(session({
   name: 'session-id',
   secret: '12345-67890-09876-54321',
